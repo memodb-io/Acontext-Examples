@@ -11,10 +11,7 @@ import os
 from dotenv import load_dotenv
 from openai import OpenAI
 from acontext import AcontextClient
-from openai.types.chat import (
-    ChatCompletionUserMessageParam,
-    ChatCompletionAssistantMessageParam,
-)
+import time
 
 
 def main():
@@ -45,17 +42,8 @@ def main():
         print(f"Created session: {session_id}")
 
         # User message
-        user_message = "What is the capital of France?"
+        user_message = "I need to write a landing page of iPhone 15 pro max, give me a plan in steps"
         print(f"\nUser: {user_message}")
-
-        # Send user message to Acontext in OpenAI format
-        user_msg = ChatCompletionUserMessageParam(role="user", content=user_message)
-        acontext_client.sessions.send_message(
-            session_id,
-            blob=user_msg,
-            format="openai"
-        )
-        print("✓ User message sent to Acontext")
 
         # Use OpenAI to generate a response
         print("Calling OpenAI API...")
@@ -67,33 +55,34 @@ def main():
         print(f"Assistant: {assistant_content}")
 
         # Send assistant message to Acontext in OpenAI format
-        assistant_msg = ChatCompletionAssistantMessageParam(
-            role="assistant",
-            content=assistant_content
-        )
         acontext_client.sessions.send_message(
             session_id,
-            blob=assistant_msg,
+            blob={"role": "assistant", "content": assistant_content},
             format="openai"
         )
         print("✓ Assistant message sent to Acontext")
 
-        # Retrieve messages from Acontext
-        print("\nRetrieving conversation history from Acontext...")
-        messages = acontext_client.sessions.get_messages(
-            session_id,
-            format="openai",
-            time_desc=True
-        )
-        print(f"Found {len(messages.messages)} messages in Acontext")
-        
-        print("\nConversation history:")
-        for msg in messages.messages:
-            role = msg.role
-            content = msg.content if hasattr(msg, 'content') else str(msg)
-            print(f"  {role}: {content}")
 
-        print("\n✓ Integration complete!")
+        import itertools
+
+        # Poll until the latest message's session_task_process_status is "success"
+        for _ in itertools.count():
+            messages = acontext_client.sessions.get_messages(
+                session_id,
+                format="acontext",
+                time_desc=True
+            )
+            latest_status = messages.items[0]["session_task_process_status"]
+            if latest_status == "success":
+                break
+            time.sleep(2)
+
+        # Retrieve all tasks from Acontext
+        print("\nRetrieving tasks from Acontext...")
+        tasks = acontext_client.sessions.get_tasks(
+            session_id,
+        )
+        print(f"Found {len(tasks.items)} tasks in Acontext")
 
 
 if __name__ == "__main__":
