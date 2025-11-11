@@ -4,7 +4,7 @@ Main entry point demonstrating OpenAI + Acontext integration.
 This script shows how to:
 1. Use OpenAI SDK to create chat completions
 2. Send OpenAI messages to Acontext sessions
-3. Retrieve conversation history from Acontext
+3. Retrieve tasks from Acontext
 """
 
 import os
@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from acontext import AcontextClient
 import time
+import itertools
 
 
 def main():
@@ -62,8 +63,6 @@ def main():
         )
         print("✓ Assistant message sent to Acontext")
 
-
-        import itertools
 
         # Poll until the latest message's session_task_process_status is "success"
         for _ in itertools.count():
