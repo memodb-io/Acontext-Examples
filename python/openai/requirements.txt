@@ -1,4 +1,0 @@
-openai>=1.0.0
-acontext>=0.1.0
-python-dotenv>=1.0.0
-
