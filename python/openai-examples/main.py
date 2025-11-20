@@ -13,6 +13,13 @@ def get_weather(city: str) -> str:
     """Returns weather info for the specified city."""
     return f"The weather in {city} is sunny"
 
+@function_tool
+def book_flight(from_city: str, to_city: str, date: str) -> str:
+    """Book a flight. """
+    # Dummy implementation - returns simulated booking results
+    return f"Flight booked successfully for '{from_city}' to '{to_city}' on '{date}'"
+
+
 async def main():
     load_dotenv()
     set_tracing_disabled(disabled=True)
@@ -25,16 +32,19 @@ async def main():
             openai_client=AsyncOpenAI(),
         ),
         model_settings=ModelSettings(tool_choice="auto"),
-        tools=[get_weather],
+        tools=[get_weather, book_flight],
     )
 
-    result = await Runner.run(agent, "What city is the Golden Gate Bridge in? and What is the weather there?")
-    new_input = result.to_input_list() + [{"role": "user", "content": "What state is it in?"}]
+    result = await Runner.run(agent, "I'd like to have a 3-day trip in Finland. I like to see the nature. Give me the plan")
+    new_input = result.to_input_list() + [{"role": "user", "content": "The plan sounds good, check the weather there"}]
+    result = await Runner.run(agent, new_input)
+    new_input = result.to_input_list() + [{"role": "user", "content": "The weather is good, I am in Shanghai now, let's book the flight and avoid red eye flight, don't ask me for more information, just book the flight"}]
     result = await Runner.run(agent, new_input)
     messages = Converter.items_to_messages(result.to_input_list())
 
     acontext_client = AcontextClient(
-        api_key=os.getenv("ACONTEXT_API_KEY"), base_url=os.getenv("ACONTEXT_BASE_URL", "http://localhost:8029/api/v1")
+        api_key=os.getenv("ACONTEXT_API_KEY"), base_url=os.getenv("ACONTEXT_BASE_URL", "http://localhost:8029/api/v1"),
+        timeout=60
     )
 
     space = acontext_client.spaces.create()
