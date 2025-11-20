@@ -77,6 +77,8 @@ async def main():
             for pref in task.data["user_preferences"]:
                 print(f"    - {pref}")
 
+    acontext_client.close()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
