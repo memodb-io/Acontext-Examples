@@ -46,17 +46,9 @@ def append_message(message: dict, conversation: list[dict], session_id: str):
     return conversation
 
 
-async def main():
+async def session_1(session_id: str):
 
     agent = create_agno_agent()
-
-    space = acontext_client.spaces.create()
-    space_id = space.id
-    print(f"Created space: {space_id}")
-
-    session = acontext_client.sessions.create(space_id=space_id)
-    session_id = session.id
-    print(f"Created session: {session_id}")
 
     # Build conversation history using OpenAI message format
     # This format works with both agno and acontext
@@ -139,6 +131,35 @@ async def main():
             for pref in task.data["user_preferences"]:
                 print(f"    - {pref}")
 
+
+async def session_2(session_id: str):
+    agent = create_agno_agent()
+
+    messages = acontext_client.sessions.get_messages(session_id)
+    conversation: list[dict] = messages.items
+    conversation.append(
+        {"role": "user", "content": "Summarize the conversation so far"}
+    )
+    response: RunOutput = agent.run(conversation)
+    print(f"\nAssistant: {response.content}")
+
+
+async def main():
+    space = acontext_client.spaces.create()
+    space_id = space.id
+    print(f"Created space: {space_id}")
+
+    session = acontext_client.sessions.create(space_id=space_id)
+    session_id = session.id
+    print(f"Created session: {session_id}")
+
+    print("\n=== Session 1 ===")
+    await session_1(session_id)
+
+    print("\n=== Session 2, get messages from Acontext and continue ===")
+    await session_2(session_id)
+
+    # Close the client after all sessions are complete
     acontext_client.close()
 
 
