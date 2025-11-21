@@ -1,0 +1,12 @@
+[project]
+name = "claude-agent-basic"
+version = "0.1.0"
+description = "Example: Claude Agent SDK + Acontext integration"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "acontext",
+    "claude-agent-sdk",
+    "python-dotenv",
+]
+
