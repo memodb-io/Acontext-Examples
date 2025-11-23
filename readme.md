@@ -23,3 +23,9 @@ curl -fsSL https://install.acontext.io | sh
 acontext create my-project --template-path "python/openai_basic"
 ```
 
+
+
+### Conventions
+
+- We use `uv` as pkg manager for Python Examples
+- We use `npm` as pkg manager for Typescript Examples
