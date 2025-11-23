@@ -10,7 +10,7 @@ from time import sleep
 
 load_dotenv()
 acontext_client = AcontextClient(
-    api_key=os.getenv("ACONTEXT_API_KEY"),
+    api_key=os.getenv("ACONTEXT_API_KEY", "sk-ac-your-root-api-bearer-token"),
     base_url=os.getenv("ACONTEXT_BASE_URL", "http://localhost:8029/api/v1"),
     timeout=60,
 )

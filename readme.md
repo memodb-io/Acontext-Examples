@@ -8,7 +8,7 @@ Supported Examples:
 
 
 
-### Install cli
+### Install/Update cli
 
 ```bash
 curl -fsSL https://install.acontext.io | sh
