@@ -1,11 +1,12 @@
 import asyncio
 import os
 from dotenv import load_dotenv
-
+from rich import print
 from agno.agent import Agent, RunOutput
 from agno.models.openai import OpenAIChat
 from agno.tools import tool
 from acontext import AcontextClient
+from time import sleep
 
 load_dotenv()
 acontext_client = AcontextClient(
@@ -40,6 +41,16 @@ def create_agno_agent() -> Agent:
     )
 
 
+def append_messages(
+    messages: list[dict], conversation: list[dict], session_id: str
+) -> list[dict]:
+    messages = messages[1:]  # exclude sys prompt
+    new_messages = messages[len(conversation) :]  # exclude already messages
+    for m in new_messages:
+        conversation = append_message(m, conversation, session_id)
+    return conversation
+
+
 def append_message(message: dict, conversation: list[dict], session_id: str):
     conversation.append(message)
     acontext_client.sessions.send_message(session_id=session_id, blob=message)
@@ -64,9 +75,10 @@ async def session_1(session_id: str):
 
     response1: RunOutput = agent.run(conversation)
     print(f"\nAssistant: {response1.content}")
+    new_messages = [m.to_dict() for m in response1.messages]
 
-    conversation = append_message(
-        {"role": "assistant", "content": str(response1.content)},
+    conversation = append_messages(
+        new_messages,
         conversation,
         session_id,
     )
@@ -82,8 +94,10 @@ async def session_1(session_id: str):
     response2: RunOutput = agent.run(conversation)
     print(f"\nAssistant: {response2.content}")
 
-    conversation = append_message(
-        {"role": "assistant", "content": str(response2.content)},
+    new_messages = [m.to_dict() for m in response2.messages]
+
+    conversation = append_messages(
+        new_messages,
         conversation,
         session_id,
     )
@@ -93,7 +107,7 @@ async def session_1(session_id: str):
     conversation = append_message(
         {
             "role": "user",
-            "content": "The weather is good, I am in Shanghai now, let's book the flight and avoid red eye flight, don't ask me for more information, just book the flight",
+            "content": "The weather is good, I am in Shanghai now, let's book the flight, you should just call the tool and don't ask me for more information. Remember, I only want the cheapest flight.",
         },
         conversation,
         session_id,
@@ -102,10 +116,25 @@ async def session_1(session_id: str):
     response3: RunOutput = agent.run(conversation)
     print(f"\nAssistant: {response3.content}")
 
-    conversation = append_message(
-        {"role": "assistant", "content": str(response3.content)},
+    new_messages = [m.to_dict() for m in response3.messages]
+
+    conversation = append_messages(
+        new_messages,
         conversation,
         session_id,
+    )
+
+    append_message(
+        {
+            "role": "user",
+            "content": "cool, everything is done, thank you!",
+        },
+        conversation,
+        session_id,
+    )
+
+    print(
+        f"Saved {len(conversation)} messages in conversation, waiting for tasks extraction..."
     )
 
     # Flush and get tasks
@@ -158,6 +187,21 @@ async def main():
 
     print("\n=== Session 2, get messages from Acontext and continue ===")
     await session_2(session_id)
+
+    print("\n=== Experiences from Acontext ===")
+    print("Waiting for the agent learning")
+    while True:
+        status = acontext_client.sessions.get_learning_status(session_id)
+        if status.not_space_digested_count == 0:
+            break
+        sleep(1)
+        print(".", end="", flush=True)
+    print("\n")
+    print(
+        acontext_client.spaces.experience_search(
+            space_id=space_id, query="travel with flight", mode="fast"
+        )
+    )
 
     # Close the client after all sessions are complete
     acontext_client.close()
