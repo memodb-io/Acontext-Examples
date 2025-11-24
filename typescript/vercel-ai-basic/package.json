@@ -1,0 +1,33 @@
+{
+  "name": "vercel-ai-acontext-example",
+  "version": "1.0.0",
+  "description": "TypeScript example demonstrating Vercel AI SDK integration with Acontext",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "keywords": [
+    "vercel-ai",
+    "acontext",
+    "typescript",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@acontext/acontext": "^0.0.6",
+    "@ai-sdk/openai": "^2.0.71",
+    "ai": "^5.0.101",
+    "dotenv": "^17.2.3",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}
+
