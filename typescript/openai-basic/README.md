@@ -1,3 +1,5 @@
+[![Made with Acontext](https://assets.memodb.io/Acontext/badge-made-with-acontext-dark.svg)](https://acontext.io)
+
 # OpenAI Basic Example with Acontext
 
 This is a TypeScript example demonstrating how to use the OpenAI SDK with Acontext integration.

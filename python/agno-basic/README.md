@@ -1,3 +1,5 @@
+[![Made with Acontext](https://assets.memodb.io/Acontext/badge-made-with-acontext-dark.svg)](https://acontext.io)
+
 # Agno with Acontext Example
 
 This example demonstrates how to use [Agno](https://github.com/agno-agi/agno) - a Python framework for building multi-agent systems - with Acontext for session persistence and task extraction.

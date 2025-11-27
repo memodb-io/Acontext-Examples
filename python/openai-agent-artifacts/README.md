@@ -1,3 +1,5 @@
+[![Made with Acontext](https://assets.memodb.io/Acontext/badge-made-with-acontext-dark.svg)](https://acontext.io)
+
 # OpenAI ReAct Agent Demo
 
 Minimal async ReAct-style agent that uses the OpenAI Python SDK plus the Acontext

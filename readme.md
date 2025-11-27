@@ -1,5 +1,7 @@
 ## `acontext-cli` examples
 
+[![Made with Acontext](https://assets.memodb.io/Acontext/badge-made-with-acontext-dark.svg)](https://acontext.io)
+
 Supported Examples:
 
 ### Python Examples

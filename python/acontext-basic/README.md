@@ -1,3 +1,5 @@
+[![Made with Acontext](https://assets.memodb.io/Acontext/badge-made-with-acontext-dark.svg)](https://acontext.io)
+
 # Acontext Examples
 
 This example demonstrates how to use the Acontext Python SDK for session management, task extraction, and artifact handling.

@@ -1,3 +1,5 @@
+[![Made with Acontext](https://assets.memodb.io/Acontext/badge-made-with-acontext-dark.svg)](https://acontext.io)
+
 # Vercel AI SDK Basic Example with Acontext
 
 This is a TypeScript example demonstrating how to use the Vercel AI SDK with Acontext integration.

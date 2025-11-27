@@ -1,3 +1,5 @@
+[![Made with Acontext](https://assets.memodb.io/Acontext/badge-made-with-acontext-dark.svg)](https://acontext.io)
+
 # OpenAI Agents SDK + Acontext Example
 
 This example demonstrates how to use the [OpenAI Agents SDK](https://github.com/openai/agents-sdk-python) with Acontext for session persistence and task extraction.

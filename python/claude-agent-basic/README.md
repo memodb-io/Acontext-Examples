@@ -1,3 +1,5 @@
+[![Made with Acontext](https://assets.memodb.io/Acontext/badge-made-with-acontext-dark.svg)](https://acontext.io)
+
 # Claude Agent SDK + Acontext Example
 
 This example shows how to pair the [Claude Agent SDK](https://docs.anthropic.com/en/docs/claude-code/sdk/sdk-python) with Acontext for session storage, task extraction, and progress tracking.
