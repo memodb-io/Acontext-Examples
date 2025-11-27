@@ -9,7 +9,7 @@ Disk APIs to demonstrate tool-calling (write, read, download).
 - Acontext API key (and optional base URL / disk ID for self-hosted setups)
 
 ## Setup
-1. `cd Acontext-Examples/python/openai_react_agent`
+1. `cd Acontext-Examples/python/openai_artifacts_agent`
 2. Copy `.env.example` to `.env` and fill in:
    ```
    OPENAI_API_KEY=...

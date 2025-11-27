@@ -1,5 +1,5 @@
 [project]
-name = "openai-react-agent"
+name = "openai-artifacts-agent"
 version = "0.1.0"
 description = "Async OpenAI React Agent example"
 readme = "README.md"
