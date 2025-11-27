@@ -6,17 +6,18 @@ Supported Examples:
 
 ### Python Examples
 
-- `python/acontext-basic`: Basic SDK examples for session management, task extraction, and artifact handling.
-- `python/openai-basic`: Use OpenAI SDK and save the data to Acontext.
-- `python/openai-agent-basic`: Use OpenAI Agents SDK and save the data to Acontext.
-- `python/openai_artifacts_agent`: Async ReAct-style agent using OpenAI Python SDK with Acontext Disk APIs for tool-calling (write, read, download).
-- `python/claude-agent-basic`: Use Claude Agent SDK with Acontext for session storage, task extraction, and progress tracking.
-- `python/agno-basic`: Use Agno framework and save the data to Acontext.
+- `python/acontext-basic`: Core Acontext SDK examples demonstrating session management, task extraction, and artifact handling.
+- `python/openai-basic`: Direct OpenAI Python SDK integration with Acontext for multi-turn conversations and manual tool calling.
+- `python/openai-agent-basic`: OpenAI Agents SDK with Acontext for persistent sessions, automatic tool execution, and conversation resumption.
+- `python/openai-agent-artifacts`: Async ReAct-style agent using OpenAI SDK with Acontext Disk APIs for file operations (write, read, download).
+- `python/claude-agent-basic`: Claude Agent SDK paired with Acontext for session storage, task extraction, and progress tracking.
+- `python/agno-basic`: Agno multi-agent framework integration with Acontext for session persistence and task extraction.
+- `python/wait-for-user-confirmation`: Experience confirmation workflow allowing users to review and approve AI-learned patterns before saving to the knowledge base.
 
 ### TypeScript Examples
 
-- `typescript/openai-basic`: Use OpenAI SDK with Acontext integration for session management and task extraction.
-- `typescript/vercel-ai-basic`: Use Vercel AI SDK with Acontext integration for session management and task extraction.
+- `typescript/openai-basic`: OpenAI SDK with Acontext integration for session management, task extraction, and conversation history retrieval.
+- `typescript/vercel-ai-basic`: Vercel AI SDK with Acontext integration for session management, task extraction, and experience search.
 
 
 
