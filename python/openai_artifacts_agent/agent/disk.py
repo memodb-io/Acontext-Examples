@@ -14,7 +14,6 @@ class DiskManager:
 
     def __init__(self) -> None:
         self._client: AcontextClient | None = None
-        self._default_disk_id: str | None = None
 
     def _ensure_client(self) -> AcontextClient:
         # Lazily construct the client so we only hit the API when needed.
@@ -34,62 +33,43 @@ class DiskManager:
             normalized += "/"
         return normalized
 
-    def _resolve_disk_id(self, disk_id: str | None) -> str:
-        if disk_id:
-            return disk_id
-        if self._default_disk_id:
-            return self._default_disk_id
-        env_disk = os.getenv("ACONTEXT_DISK_ID")
-        if env_disk:
-            self._default_disk_id = env_disk
-            return env_disk
-        client = self._ensure_client()
-        disk = client.disks.create()
-        self._default_disk_id = disk.id
-        return disk.id
-
     def write_file(
         self,
         *,
-        disk_id: str | None,
+        disk_id: str,
         file_path: str | None,
         filename: str,
         content: str,
-        encoding: str,
-        meta: Dict[str, Any] | None,
     ) -> Dict[str, Any]:
         client = self._ensure_client()
-        resolved_disk = self._resolve_disk_id(disk_id)
         normalized_path = self._normalize_path(file_path)
-        payload = FileUpload(filename=filename, content=content.encode(encoding))
+        payload = FileUpload(filename=filename, content=content.encode("utf-8"))
         artifact = client.disks.artifacts.upsert(
-            resolved_disk,
+            disk_id,
             file=payload,
-            file_path=normalized_path,
-            meta=meta or {},
+            file_path=normalized_path
         )
         return {
-            "disk_id": resolved_disk,
+            "disk_id": disk_id,
             "path": artifact.path,
             "filename": artifact.filename,
-            "meta": artifact.meta,
         }
 
     def read_file(
         self,
         *,
-        disk_id: str | None,
+        disk_id: str,
         file_path: str | None,
         filename: str,
         max_chars: int,
     ) -> Dict[str, Any]:
         client = self._ensure_client()
-        resolved_disk = self._resolve_disk_id(disk_id)
         normalized_path = self._normalize_path(file_path)
         result = client.disks.artifacts.get(
-            resolved_disk,
+            disk_id,
             file_path=normalized_path,
             filename=filename,
+            with_public_url=True,
             with_content=True,
         )
         if not result.content:
@@ -99,18 +79,17 @@ class DiskManager:
         preview = content_str[:max_chars]
         truncated = len(content_str) > len(preview)
         return {
-            "disk_id": resolved_disk,
+            "disk_id": disk_id,
             "path": normalized_path,
             "filename": filename,
             "content_preview": preview,
             "truncated": truncated,
-            "meta": result.artifact.meta,
         }
 
     def download_file(
         self,
         *,
-        disk_id: str | None,
+        disk_id: str,
         file_path: str | None,
         filename: str,
         destination_path: str | None,
@@ -118,10 +97,9 @@ class DiskManager:
         timeout: int,
     ) -> Dict[str, Any]:
         client = self._ensure_client()
-        resolved_disk = self._resolve_disk_id(disk_id)
         normalized_path = self._normalize_path(file_path)
         result = client.disks.artifacts.get(
-            resolved_disk,
+            disk_id,
             file_path=normalized_path,
             filename=filename,
             with_public_url=True,
@@ -135,12 +113,44 @@ class DiskManager:
         resp.raise_for_status()
         target.write_bytes(resp.content)
         return {
-            "disk_id": resolved_disk,
+            "disk_id": disk_id,
             "path": normalized_path,
             "filename": filename,
             "local_path": str(target),
             "bytes": len(resp.content),
             "public_url": result.public_url,
+        }
+
+    def list_artifacts(
+        self,
+        *,
+        disk_id: str,
+        file_path: str | None,
+    ) -> Dict[str, Any]:
+        client = self._ensure_client()
+        normalized_path = self._normalize_path(file_path) if file_path else None
+        result = client.disks.artifacts.list(
+            disk_id,
+            path=normalized_path,
+        )
+        artifacts_list = [
+            {
+                "filename": artifact.filename,
+                "path": artifact.path,
+                "size_b": (
+                    artifact.meta.get("__artifact_info__", {}).get("size")
+                    if artifact.meta and isinstance(artifact.meta, dict)
+                    else None
+                ),
+                "meta": artifact.meta,
+            }
+            for artifact in result.artifacts
+        ]
+        return {
+            "disk_id": disk_id,
+            "path": normalized_path or "/",
+            "artifacts": artifacts_list,
+            "directories": result.directories,
         }
 
 
