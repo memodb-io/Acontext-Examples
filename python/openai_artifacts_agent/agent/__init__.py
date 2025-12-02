@@ -1,4 +1,4 @@
-from .react import react_agent
+from .react import AcontextArtifactAgent
 
-__all__ = ["react_agent"]
+__all__ = ["AcontextArtifactAgent"]
 
