@@ -5,10 +5,9 @@ description = "Async OpenAI React Agent example"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "acontext>=0.0.4",
+    "acontext",
     "openai>=1.51.0",
     "python-dotenv>=1.0.0",
-    "requests>=2.32.0",
 ]
 
 

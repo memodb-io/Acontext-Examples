@@ -1,7 +1,7 @@
 # OpenAI ReAct Agent Demo
 
 Minimal async ReAct-style agent that uses the OpenAI Python SDK plus the Acontext
-Disk APIs to demonstrate tool-calling (write, read, list, download).
+Disk Tools to demonstrate tool-calling (write, read, replace, list).
 
 ## Prerequisites
 - Python 3.11+ (project uses `uv` but regular `pip` also works)
@@ -19,8 +19,10 @@ Disk APIs to demonstrate tool-calling (write, read, list, download).
    ACONTEXT_BASE_URL=http://localhost:8029/api/v1
    ```
 3. Install dependencies:
-   - With uv: `uv sync`
-   - With pip: `python -m venv .venv && .venv\Scripts\activate && pip install -r requirements.txt`
+   - With uv: `uv sync` (recommended)
+   - With pip: `python -m venv .venv && .venv\Scripts\activate && pip install -e .`
+   
+   **Note**: This project requires `acontext>=0.1.0` for `DISK_TOOLS` support.
 
 ## Run the Demo
 ```
@@ -31,7 +33,7 @@ The agent will:
 2. Write `/notes/demo.txt` on the Acontext disk with a short tools summary
 3. List the artifacts in `/notes/` directory
 4. Read the file back to verify content
-5. Download the file into `./downloads/demo.txt`
+5. Use `replace_string` to modify content in the file
 
 Console logs show each tool invocation and the final response.
 
@@ -40,16 +42,14 @@ Console logs show each tool invocation and the final response.
 agent/
   __init__.py        # exports AcontextArtifactAgent
   react.py           # AcontextArtifactAgent class with chat loop + tool call handling
-  tools.py           # tool schemas + async wrappers (get_tools_schema, create_tool_map)
-  disk.py            # DiskManager built on AcontextClient
+  tools.py           # deprecated (now using DISK_TOOLS from SDK)
+  disk.py            # deprecated (now using DISK_TOOLS from SDK)
   pretty_print.py    # console output formatting utilities
-downloads/           # local destination for downloaded artifacts
 main.py              # demo entry point: creates disk and runs agent
 ```
 ## Troubleshooting
 - Missing `.env` values → runtime `RuntimeError` when loading API keys.
 - Disk errors → confirm `ACONTEXT_API_KEY` and the API server URL.
-- Download step fails → ensure `downloads/` exists or let the tool create it.
 
 ---
 
@@ -60,11 +60,11 @@ This companion section explains how the demo is structured and how you can reuse
 ## Feature Highlights
 - **Async execution**: `AsyncOpenAI` plus `asyncio` keep tool calls and model responses concurrent.
 - **ReAct loop safeguards**: `max_turn` prevents infinite cycles during experimentation.
-- **Modular tool layer**: `agent/disk.py` wraps the Disk APIs, while `agent/tools.py` declares schemas and async implementations.
+- **SDK-integrated tools**: Uses `DISK_TOOLS` from `acontext.agent.disk` for pre-built filesystem operations.
 - **Artifact listing**: `list_artifacts` allows the agent to explore directory contents on the Acontext disk.
-- **Canonical download flow**: `download_file` produces a temporary link and writes the artifact to `./downloads` (or a path you pass in).
+- **File manipulation**: `write_file`, `read_file`, and `replace_string` provide comprehensive file operations.
 - **Custom OpenAI endpoint**: point `base_url` at proxies or private deployments when needed.
-- **Explicit disk management**: Disk is created in `main.py` and passed to `AcontextArtifactAgent` for better control and isolation.
+- **Explicit disk management**: Disk is created in `main.py` and tool context is passed to `AcontextArtifactAgent`.
 
 ## Quick Start
 
@@ -86,7 +86,14 @@ This companion section explains how the demo is structured and how you can reuse
 
 > To reuse elsewhere, import `AcontextArtifactAgent` and use it as an async context manager:
 > ```python
-> async with AcontextArtifactAgent(api_key=..., disk_id=...) as agent:
+> from acontext import AcontextClient
+> from acontext.agent.disk import DISK_TOOLS
+> 
+> client = AcontextClient(api_key=..., base_url=...)
+> disk = client.disks.create()
+> ctx = DISK_TOOLS.format_context(client, disk.id)
+> 
+> async with AcontextArtifactAgent(api_key=..., tool_context=ctx) as agent:
 >     result = await agent.run(user_query)
 > ```
 
@@ -95,9 +102,9 @@ This companion section explains how the demo is structured and how you can reuse
 ```text
 agent/
   __init__.py         # exposes AcontextArtifactAgent
-  disk.py             # Acontext DiskManager plus read/write helpers
   react.py            # AcontextArtifactAgent class with ReAct loop orchestration
-  tools.py            # tool schemas and async handlers (get_tools_schema, create_tool_map)
+  tools.py            # deprecated (now using DISK_TOOLS from SDK)
+  disk.py             # deprecated (now using DISK_TOOLS from SDK)
   pretty_print.py     # console output formatting utilities
 main.py               # demo entry point: creates disk and runs agent
 pyproject.toml        # dependency manifest (openai + python-dotenv)
@@ -109,39 +116,40 @@ README.md             # this guide
 1. **Initialization** (`main.py`):
    - Load environment variables from `.env`
    - Create `AcontextClient` and create a new disk
-   - Pass `disk_id` to `AcontextArtifactAgent` when initializing the agent
+   - Create tool context using `DISK_TOOLS.format_context(client, disk.id)`
+   - Pass `tool_context` to `AcontextArtifactAgent` when initializing the agent
 
 2. **Agent Setup** (`react.py`):
    - `AcontextArtifactAgent` is initialized as an async context manager
-   - On context entry: Create tool map with `disk_id` automatically injected
-   - Initialize `AsyncOpenAI` client
+   - On context entry: Initialize `AsyncOpenAI` client
+   - Get tool schemas using `DISK_TOOLS.to_openai_tool_schema()`
    - Initialize conversation with user query
 
 3. **ReAct Loop**:
-   - Send messages to OpenAI API with available tools (via `get_tools_schema()`)
+   - Send messages to OpenAI API with available tools from `DISK_TOOLS`
    - If model returns tool calls:
-     - Execute each tool with `disk_id` automatically injected via tool map
+     - Execute each tool using `DISK_TOOLS.execute_tool()` wrapped in `asyncio.to_thread()`
      - Append tool results to conversation history
      - Print formatted tool call information using `pretty_print` utilities
    - Continue until model returns final answer or `max_turn` reached
 
-4. **Tool Execution** (`tools.py`):
-   - Tools automatically use the provided `disk_id`
-   - `write_file`: Creates/updates files on Acontext disk
-   - `read_file`: Reads file content with bounded preview
-   - `list_artifacts`: Lists artifacts in a directory on the Acontext disk
-   - `download_file`: Downloads file to local `./downloads/` directory
+4. **Tool Execution** (via `DISK_TOOLS`):
+   - Tools automatically use the provided tool context (contains `disk_id`)
+   - `write_file`: Creates/updates text files on Acontext disk
+   - `read_file`: Reads file content with optional `line_offset` and `line_limit` parameters
+   - `replace_string`: Finds and replaces text in files
+   - `list_artifacts`: Lists files and directories in a specified path (requires `file_path` parameter)
 
-This pattern lets you wrap any sync or async Python function as a tool so the model can extend its capabilities.
+This pattern demonstrates how to use the SDK's pre-built `DISK_TOOLS` with async OpenAI clients.
 
 ### How the Disk Tools Work
-- All disk operations go through `DiskManager`, which lazy-loads `AcontextClient` so the client is constructed just once.
-- `disk_id` is passed explicitly from `main.py` to `AcontextArtifactAgent`, then injected into all tool calls via `create_tool_map()`.
-- Tool schemas are generated via `get_tools_schema()` which converts `TOOL_DEFINITIONS` to OpenAI-compatible format.
-- `write_file` accepts an optional `file_path` parameter for organizing files into directories.
-- `read_file` returns a bounded-length preview (1200 chars) to avoid overwhelming the model with large payloads.
-- `list_artifacts` lists all artifacts in a specified directory path, returning their names and types.
-- `download_file` fetches a temporary link, stores the file under `./downloads` (or your chosen path), and returns the local path in the tool result.
-- All tools use `ToolDefinition` dataclass that combines schema and implementation, with `disk_id` automatically injected via factory functions.
+- All disk operations go through `DISK_TOOLS` from `acontext.agent.disk`, which provides pre-configured tools.
+- Tool context is created using `DISK_TOOLS.format_context(client, disk.id)` and contains the client and disk ID.
+- Tool schemas are generated via `DISK_TOOLS.to_openai_tool_schema()` which returns OpenAI-compatible tool definitions.
+- `write_file` accepts `filename`, `content`, and optional `file_path` parameters for organizing files into directories.
+- `read_file` accepts `filename`, optional `file_path`, `line_offset` (default 0), and `line_limit` (default 100) parameters.
+- `replace_string` accepts `filename`, `old_string`, `new_string`, and optional `file_path` parameters.
+- `list_artifacts` requires `file_path` parameter (e.g., `"/notes/"` or `"/"`).
+- Tool execution is synchronous, so `asyncio.to_thread()` is used to run `DISK_TOOLS.execute_tool()` in a thread pool.
 
 

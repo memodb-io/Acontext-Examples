@@ -3,6 +3,7 @@ import asyncio
 import os
 from pathlib import Path
 from acontext import AcontextClient
+from acontext.agent.disk import DISK_TOOLS
 from dotenv import load_dotenv
 from agent import AcontextArtifactAgent
 
@@ -15,6 +16,8 @@ async def main() -> None:
         raise RuntimeError("Please set OPENAI_API_KEY in the environment or .env file.")
 
     base_url = os.getenv("OPENAI_BASE_URL")
+    print(base_url)
+    print(api_key)
     
     # Create Acontext client and disk
     acontext_api_key = os.getenv("ACONTEXT_API_KEY")
@@ -24,13 +27,16 @@ async def main() -> None:
     client = AcontextClient(api_key=acontext_api_key, base_url=acontext_base_url)
     disk = client.disks.create()
     
+    # Create tool context using DISK_TOOLS
+    ctx = DISK_TOOLS.format_context(client, disk.id)
+    
     print(f"Created disk with ID: {disk.id}")
     
     user_query = (
         "Please create /notes/demo.txt with a short summary about your tools, "
         "then list the artifacts in /notes/ directory, "
         "read the file back to confirm it was written, "
-        "and finally download the file locally to verify the download tool."
+        "and finally use replace_string to replace a word in the file."
     )
 
     print("Starting agent execution...")
@@ -41,7 +47,7 @@ async def main() -> None:
     async with AcontextArtifactAgent(
         api_key=api_key,
         base_url=base_url,
-        disk_id=disk.id,
+        tool_context=ctx,
         model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
         max_turn=5,
     ) as agent:
