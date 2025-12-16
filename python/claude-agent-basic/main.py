@@ -38,11 +38,15 @@ def require_env(key: str) -> str:
     """Fetch an environment variable or raise an informative error."""
     value = os.getenv(key)
     if not value:
-        raise ValueError(f"The environment variable '{key}' is required for this example.")
+        raise ValueError(
+            f"The environment variable '{key}' is required for this example."
+        )
     return value
 
 
-def serialize_content_block(block: TextBlock | ThinkingBlock | ToolUseBlock | ToolResultBlock) -> dict[str, Any]:
+def serialize_content_block(
+    block: TextBlock | ThinkingBlock | ToolUseBlock | ToolResultBlock,
+) -> dict[str, Any]:
     """Convert SDK content blocks into Anthropic's message schema."""
     if isinstance(block, TextBlock):
         return {"type": "text", "text": block.text}
@@ -109,7 +113,9 @@ def pretty_print_message(message: UserMessage | AssistantMessage) -> None:
             preview = block.thinking[:120].replace("\n", " ")
             print(f"{role} (thinking) {preview}...")
         elif isinstance(block, ToolUseBlock):
-            print(f"{role} Tool call -> {block.name}: {json.dumps(block.input, ensure_ascii=False)}")
+            print(
+                f"{role} Tool call -> {block.name}: {json.dumps(block.input, ensure_ascii=False)}"
+            )
         elif isinstance(block, ToolResultBlock):
             snippet = block.content
             if isinstance(snippet, list):
@@ -194,14 +200,14 @@ def send_transcript_to_acontext(
         print(f"[acontext] Received {len(tasks.items)} tasks\n")
 
         for task in tasks.items:
-            description = task.data.get("task_description", "Unknown task")
+            description = task.data.task_description
             print(f"- Task #{task.order} ({task.status}) -> {description}")
-            progresses = task.data.get("progresses", [])
+            progresses = task.data.progresses or []
             if progresses:
                 print("  Progress updates:")
                 for progress in progresses:
                     print(f"    • {progress}")
-            preferences = task.data.get("user_preferences", [])
+            preferences = task.data.user_preferences or []
             if preferences:
                 print("  User preferences:")
                 for pref in preferences:
@@ -221,7 +227,11 @@ async def main() -> None:
         anthropic_base_url=anthropic_base_url,
     )
     total_cost = sum(filter(None, (result.total_cost_usd for result in results)))
-    print(f"\n[Summary] Total Claude SDK cost: ${total_cost:.4f}" if total_cost else "\n[Summary] Total Claude SDK cost: n/a")
+    print(
+        f"\n[Summary] Total Claude SDK cost: ${total_cost:.4f}"
+        if total_cost
+        else "\n[Summary] Total Claude SDK cost: n/a"
+    )
 
     send_transcript_to_acontext(
         transcript=transcript,
@@ -232,4 +242,3 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
-

@@ -100,7 +100,7 @@ async function runAgent(
     iteration += 1;
 
     const model = createModel();
-    
+
     // Convert messages to Vercel AI SDK format
     // Ensure content is always a string (not array) for user and assistant messages
     // Vercel AI SDK only accepts 'user' and 'assistant' roles in messages array
@@ -116,21 +116,21 @@ async function runAgent(
         let content = msg.content;
         if (Array.isArray(content)) {
           // If content is an array, extract text from it
-          content = content.map((item: any) => 
+          content = content.map((item: any) =>
             typeof item === 'string' ? item : item.text || item.content || ''
           ).join(' ');
         }
         if (typeof content !== 'string') {
           content = String(content || '');
         }
-        
+
         // Return only role and content (Vercel AI SDK format)
         return {
           role: msg.role,
           content: content,
         };
       });
-    
+
     // Also include internal messages for the current generateText call
     // These are tool results converted to user messages
     const internalMessages = messagesToSend
@@ -139,10 +139,10 @@ async function runAgent(
         role: msg.role,
         content: String(msg.content || ''),
       }));
-    
+
     // Combine regular messages with internal messages
     const allMessages = [...currentMessages, ...internalMessages];
-    
+
     const result = await generateText({
       model,
       system: systemMessage,
@@ -170,7 +170,7 @@ async function runAgent(
           // Try alternative field names that Vercel AI SDK might use
           args = tc.parameters || tc.input || {};
         }
-        
+
         // Ensure args is an object, not a string
         if (typeof args === 'string') {
           try {
@@ -179,15 +179,15 @@ async function runAgent(
             args = {};
           }
         }
-        
+
         // Ensure args is always an object (not null or undefined)
         if (!args || typeof args !== 'object') {
           args = {};
         }
-        
+
         // Convert to JSON string - always return a valid JSON string
         const argsString = JSON.stringify(args);
-        
+
         // Store function info for execution
         toolCallsWithFunction.push({
           id: tc.toolCallId,
@@ -225,7 +225,7 @@ async function runAgent(
     // Even though tools have execute functions, we still need to handle tool results
     // and pass them back to the model in a format it can understand
     const toolResults: Array<{ toolName: string; result: string; toolCallId: string }> = [];
-    
+
     for (const toolCallInfo of toolCallsWithFunction) {
       const functionName = toolCallInfo.function.name;
       const functionArgsStr = toolCallInfo.function.arguments || '{}';
@@ -243,7 +243,7 @@ async function runAgent(
       };
       newMessages.push(toolMessage);
     }
-    
+
     // If we have tool results, we need to continue the conversation
     // Vercel AI SDK doesn't support 'tool' role in messages, so we convert tool results
     // to a user message format for the next iteration, but we mark it so it won't be sent to Acontext
@@ -251,7 +251,7 @@ async function runAgent(
       const toolResultsText = toolResults
         .map(tr => `${tr.toolName} returned: ${tr.result}`)
         .join('\n');
-      
+
       // Add tool results as a user message for the next generateText call
       // This is an internal message, not sent to Acontext
       const toolResultUserMessage = {
@@ -261,7 +261,7 @@ async function runAgent(
         _internal: true,
       };
       messagesToSend.push(toolResultUserMessage);
-      
+
       // Continue the loop to get the model's response based on tool results
       // Don't break here, let the loop continue
     }
@@ -349,21 +349,21 @@ async function session1(sessionId: string): Promise<void> {
   for (const task of tasksResponse.items) {
     console.log(`\nTask #${task.order}:`);
     console.log(`  ID: ${task.id}`);
-    console.log(`  Title: ${task.data['task_description']}`);
+    console.log(`  Title: ${task.data.task_description}`);
     console.log(`  Status: ${task.status}`);
 
     // Show progress updates if available
-    if ('progresses' in task.data) {
-      console.log(`  Progress updates: ${(task.data['progresses'] as any[]).length}`);
-      for (const progress of task.data['progresses'] as any[]) {
+    if (task.data.progresses) {
+      console.log(`  Progress updates: ${task.data.progresses.length}`);
+      for (const progress of task.data.progresses) {
         console.log(`    - ${progress}`);
       }
     }
 
     // Show user preferences if available
-    if ('user_preferences' in task.data) {
+    if (task.data.user_preferences) {
       console.log('  User preferences:');
-      for (const pref of task.data['user_preferences'] as any[]) {
+      for (const pref of task.data.user_preferences) {
         console.log(`    - ${pref}`);
       }
     }

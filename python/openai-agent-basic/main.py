@@ -3,7 +3,15 @@ import os
 from dotenv import load_dotenv
 from time import sleep
 
-from agents import Agent, Runner, ModelSettings, AsyncOpenAI, function_tool, OpenAIChatCompletionsModel, set_tracing_disabled
+from agents import (
+    Agent,
+    Runner,
+    ModelSettings,
+    AsyncOpenAI,
+    function_tool,
+    OpenAIChatCompletionsModel,
+    set_tracing_disabled,
+)
 from agents.models.chatcmpl_converter import Converter
 from acontext import AcontextClient
 from helper import message_to_input_items
@@ -46,9 +54,9 @@ def create_agent():
 
 def send_message(message, session_id: str):
     """Send a message to Acontext."""
-    acontext_client.sessions.send_message(session_id=session_id, blob=message, format="openai")
-
-
+    acontext_client.sessions.send_message(
+        session_id=session_id, blob=message, format="openai"
+    )
 
 
 async def session_1(session_id: str):
@@ -59,12 +67,15 @@ async def session_1(session_id: str):
     user_msg_1_content = "I'd like to have a 3-day trip in Finland. I like to see the nature. Give me the plan"
 
     result = await Runner.run(agent, user_msg_1_content)
-    
+
     # Second interaction - check weather
     print("\n=== Second interaction: Checking weather ===")
-    user_msg_2 = {"role": "user", "content": "The plan sounds good, check the weather there"}
+    user_msg_2 = {
+        "role": "user",
+        "content": "The plan sounds good, check the weather there",
+    }
     new_input = result.to_input_list() + [user_msg_2]
-    result = await Runner.run(agent, new_input) 
+    result = await Runner.run(agent, new_input)
 
     # Third interaction - book flight
     print("\n\n=== Third interaction: Booking flight ===")
@@ -74,7 +85,6 @@ async def session_1(session_id: str):
     }
     new_input = result.to_input_list() + [user_msg_3]
     result = await Runner.run(agent, new_input)
-
 
     # Fourth interaction - thank you
     user_msg_4 = {
@@ -91,7 +101,7 @@ async def session_1(session_id: str):
     print(
         f"\nSaved {len(messages)} messages in conversation, waiting for tasks extraction..."
     )
-    
+
     # Flush and get tasks
     acontext_client.sessions.flush(session_id)
     tasks_response = acontext_client.sessions.get_tasks(session_id)
@@ -100,19 +110,19 @@ async def session_1(session_id: str):
     for task in tasks_response.items:
         print(f"\nTask #{task.order}:")
         print(f"  ID: {task.id}")
-        print(f"  Title: {task.data['task_description']}")
+        print(f"  Title: {task.data.task_description}")
         print(f"  Status: {task.status}")
 
         # Show progress updates if available
-        if "progresses" in task.data:
-            print(f"  Progress updates: {len(task.data['progresses'])}")
-            for progress in task.data["progresses"]:
+        if task.data.progresses:
+            print(f"  Progress updates: {len(task.data.progresses)}")
+            for progress in task.data.progresses:
                 print(f"    - {progress}")
 
         # Show user preferences if available
-        if "user_preferences" in task.data:
+        if task.data.user_preferences:
             print("  User preferences:")
-            for pref in task.data["user_preferences"]:
+            for pref in task.data.user_preferences:
                 print(f"    - {pref}")
 
 
@@ -127,10 +137,12 @@ async def session_2(session_id: str):
         items = message_to_input_items(msg)
         conversation.extend(items)
 
-    conversation.append({"role": "user", "content": "Summarize the conversation so far"})
+    conversation.append(
+        {"role": "user", "content": "Summarize the conversation so far"}
+    )
 
-    result = await Runner.run(agent, conversation) 
-    
+    result = await Runner.run(agent, conversation)
+
     print(f"\nAssistant: {result.final_output}")
 
 
