@@ -137,7 +137,7 @@ async function runAgent(
       id: string;
       function: { name: string; arguments: string };
     }> = [];
-    
+
     if (message.tool_calls) {
       messageDict.tool_calls = message.tool_calls.map((tc: any) => {
         // Store function info for execution
@@ -148,7 +148,7 @@ async function runAgent(
             arguments: tc.function.arguments,
           },
         });
-        
+
         return {
           id: tc.id,
           type: 'function',
@@ -279,21 +279,21 @@ async function session1(sessionId: string): Promise<void> {
   for (const task of tasksResponse.items) {
     console.log(`\nTask #${task.order}:`);
     console.log(`  ID: ${task.id}`);
-    console.log(`  Title: ${task.data['task_description']}`);
+    console.log(`  Title: ${task.data.task_description}`);
     console.log(`  Status: ${task.status}`);
 
     // Show progress updates if available
-    if ('progresses' in task.data) {
-      console.log(`  Progress updates: ${(task.data['progresses'] as any[]).length}`);
-      for (const progress of task.data['progresses'] as any[]) {
+    if (task.data.progresses) {
+      console.log(`  Progress updates: ${task.data.progresses.length}`);
+      for (const progress of task.data.progresses) {
         console.log(`    - ${progress}`);
       }
     }
 
     // Show user preferences if available
-    if ('user_preferences' in task.data) {
+    if (task.data.user_preferences) {
       console.log('  User preferences:');
-      for (const pref of task.data['user_preferences'] as any[]) {
+      for (const pref of task.data.user_preferences) {
         console.log(`    - ${pref}`);
       }
     }
