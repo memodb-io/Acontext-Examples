@@ -187,7 +187,7 @@ def send_transcript_to_acontext(
 
         print("[acontext] Sending messages (format='anthropic')...")
         for message in transcript:
-            client.sessions.send_message(
+            client.sessions.store_message(
                 session_id=session.id,
                 blob=message,
                 format="anthropic",

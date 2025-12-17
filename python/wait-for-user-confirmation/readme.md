@@ -109,7 +109,7 @@ Creates a new space (knowledge container) and session (conversation thread).
 
 ```python
 for m in messages:
-    acontext_client.sessions.send_message(session_id=session.id, blob=m)
+    acontext_client.sessions.store_message(session_id=session.id, blob=m)
 ```
 
 Sends each message in the conversation to Acontext for processing.

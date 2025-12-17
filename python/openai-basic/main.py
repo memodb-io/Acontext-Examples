@@ -93,7 +93,7 @@ def create_openai_client() -> OpenAI:
 def append_message(message: dict, conversation: list[dict], session_id: str):
     """Append a message to conversation and send to Acontext."""
     conversation.append(message)
-    acontext_client.sessions.send_message(session_id=session_id, blob=message)
+    acontext_client.sessions.store_message(session_id=session_id, blob=message)
     return conversation
 
 

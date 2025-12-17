@@ -18,7 +18,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@acontext/acontext": "^0.0.6",
+    "@acontext/acontext": "^0.0.12",
     "dotenv": "^17.2.3",
     "openai": "^6.9.1"
   },

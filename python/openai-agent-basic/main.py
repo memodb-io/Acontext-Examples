@@ -52,11 +52,11 @@ def create_agent():
     )
 
 
-def send_message(message, session_id: str):
-    """Send a message to Acontext."""
-    acontext_client.sessions.send_message(
-        session_id=session_id, blob=message, format="openai"
-    )
+def store_message(message, session_id: str):
+    """Store a message to Acontext."""
+    acontext_client.sessions.store_message(session_id=session_id, blob=message, format="openai")
+
+
 
 
 async def session_1(session_id: str):
@@ -96,7 +96,7 @@ async def session_1(session_id: str):
 
     messages = Converter.items_to_messages(result.to_input_list())
     for msg in messages:
-        send_message(msg, session_id)
+        store_message(msg, session_id)
 
     print(
         f"\nSaved {len(messages)} messages in conversation, waiting for tasks extraction..."

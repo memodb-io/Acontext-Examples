@@ -158,7 +158,7 @@ def main():
         ]
 
         for message in messages:
-            acontext_client.sessions.send_message(
+            acontext_client.sessions.store_message(
                 session_id=session.id, blob=message, format="acontext"
             )
 

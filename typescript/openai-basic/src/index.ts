@@ -92,7 +92,7 @@ async function appendMessage(
   sessionId: string
 ): Promise<any[]> {
   conversation.push(message);
-  await acontextClient.sessions.sendMessage(sessionId, message, {
+  await acontextClient.sessions.storeMessage(sessionId, message, {
     format: 'openai',
   });
   return conversation;

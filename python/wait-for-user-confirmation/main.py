@@ -50,7 +50,7 @@ def main():
     space = acontext_client.spaces.create()
     session = acontext_client.sessions.create(space_id=space.id)
     for m in messages:
-        acontext_client.sessions.send_message(session_id=session.id, blob=m)
+        acontext_client.sessions.store_message(session_id=session.id, blob=m)
         print_console.print(f"[bold blue]{m['role']}[/bold blue]: {m['content']}")
     print_console.rule("Wait for Task Agent")
     acontext_client.sessions.flush(session.id)

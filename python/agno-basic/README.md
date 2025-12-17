@@ -52,7 +52,7 @@ Messages in OpenAI format can be sent directly to Acontext without any conversio
 ```python
 def append_message(message: dict, conversation: list[dict], session_id: str):
     conversation.append(message)
-    acontext_client.sessions.send_message(session_id=session_id, blob=message)
+    acontext_client.sessions.store_message(session_id=session_id, blob=message)
     return conversation
 ```
 

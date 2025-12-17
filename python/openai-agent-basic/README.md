@@ -63,7 +63,7 @@ The conversation is converted from Responses API format to Chat Completions API 
 ```python
 messages = Converter.items_to_messages(result.to_input_list())
 for msg in messages:
-    acontext_client.sessions.send_message(session_id=session_id, blob=msg, format="openai")
+    acontext_client.sessions.store_message(session_id=session_id, blob=msg, format="openai")
 ```
 
 ### Loading Messages from Acontext
