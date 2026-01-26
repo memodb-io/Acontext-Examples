@@ -515,12 +515,7 @@ Please summarize the conversation so far."""
 
 def main() -> None:
 
-    space = client.spaces.create(configs={"name": "smolagents-basic-space"})
-    space_id = space.id
-    print(f"Created space: {space_id}")
-
     session = client.sessions.create(
-        space_id=space_id,
         configs={"mode": "smolagents-toolcalling"},
     )
     session_id = session.id
@@ -535,20 +530,6 @@ def main() -> None:
         print("\n=== Session 2, get messages from Acontext and continue ===")
         session_2(agent_session2, client, session_id)
 
-        print("\n=== Experiences from Acontext ===")
-        print("Waiting for the agent learning", end="", flush=True)
-        while True:
-            status = client.sessions.get_learning_status(session_id)
-            if status.not_space_digested_count == 0:
-                break
-            time.sleep(1)
-            print(".", end="", flush=True)
-        print("\n")
-        print(
-            client.spaces.experience_search(
-                space_id=space_id, query="travel with flight", mode="fast"
-            )
-        )
     finally:
         client.close()
 

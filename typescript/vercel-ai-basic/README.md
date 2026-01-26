@@ -41,12 +41,11 @@ npm start
 
 ## What it does
 
-1. Creates an Acontext space and session
+1. Creates an Acontext session
 2. Runs a multi-turn conversation with:
    - Planning a trip to Finland
    - Checking weather
    - Booking a flight
 3. Extracts tasks from the conversation using Acontext
 4. Retrieves conversation history and continues with a summary
-5. Demonstrates experience search from Acontext
 

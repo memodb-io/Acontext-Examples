@@ -316,16 +316,8 @@ async function session2(sessionId: string): Promise<void> {
   console.log(`\nAssistant: ${responseContent}`);
 }
 
-async function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 async function main(): Promise<void> {
-  const space = await acontextClient.spaces.create();
-  const spaceId = space.id;
-  console.log(`Created space: ${spaceId}`);
-
-  const session = await acontextClient.sessions.create({ spaceId });
+  const session = await acontextClient.sessions.create();
   const sessionId = session.id;
   console.log(`Created session: ${sessionId}`);
 
@@ -334,26 +326,6 @@ async function main(): Promise<void> {
 
   console.log('\n=== Session 2, get messages from Acontext and continue ===');
   await session2(sessionId);
-
-  console.log('\n=== Experiences from Acontext ===');
-  console.log('Waiting for the agent learning');
-  while (true) {
-    const status = await acontextClient.sessions.getLearningStatus(sessionId);
-    if (status.not_space_digested_count === 0) {
-      break;
-    }
-    await sleep(1000);
-    process.stdout.write('.');
-  }
-  console.log('\n');
-  const experienceResult = await acontextClient.spaces.experienceSearch(
-    spaceId,
-    {
-      query: 'travel with flight',
-      mode: 'fast',
-    }
-  );
-  console.log(JSON.stringify(experienceResult, null, 2));
 }
 
 main().catch(console.error);

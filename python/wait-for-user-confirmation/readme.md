@@ -2,23 +2,20 @@
 
 # Wait for User Confirmation Example
 
-This example demonstrates how to use Acontext's experience confirmation feature to allow users to review and approve AI-learned experiences before they are saved to the knowledge base.
+This example demonstrates how to use Acontext for session management and task extraction from conversations.
 
 ## What This Example Does
 
 This example simulates a flight booking conversation where:
 
 1. **Creates a conversation**: Sends a series of messages between a user and an assistant about booking a flight to Tokyo
-2. **Waits for learning**: Monitors the Acontext learning process as it analyzes the conversation
-3. **Retrieves unconfirmed experiences**: Gets experiences that need user approval (e.g., the user's preference for the cheapest flight)
-4. **User review**: Prompts the user to approve or reject each experience before it's saved
+2. **Flushes session**: Triggers Acontext to process the conversation and extract tasks
 
 ## Key Features
 
-- **Experience Confirmation**: Review AI-learned patterns before they become part of the agent's memory
-- **Learning Status Monitoring**: Track when Acontext has finished processing conversations
+- **Session Management**: Create and manage conversation sessions with Acontext
+- **Task Extraction**: Automatically extract tasks from conversations
 - **Interactive CLI**: User-friendly command-line interface using Rich for colored output
-- **Quality Control**: Ensures only approved experiences are saved to the knowledge base
 
 ## Prerequisites
 
@@ -65,9 +62,7 @@ uv run main.py
 The example will:
 
 1. Display the simulated conversation messages
-2. Wait for Acontext to learn from the conversation
-3. Show any unconfirmed experiences (e.g., "I only want the cheapest flight")
-4. Prompt you to approve (y) or reject (n) each experience
+2. Flush the session to trigger task extraction
 
 Example interaction:
 
@@ -81,29 +76,17 @@ user: You must remember: I only want the cheapest flight
 assistant: Done, I have booked the flight
 user: Yes, great job!
 ━━━━━━━━━━━━━━━━ Wait for Task Agent ━━━━━━━━━━━━━━━━
-Waiting for the agent learning .....
-━━━━━━━━━━━━━━━━ New Experience ━━━━━━━━━━━━━━━━
-{
-    'data': {
-        'preferences': 'Always pick the cheapest flight.', 
-        'tool_sops': [], 
-        'use_when': 'Flight booking'}, 
-    'type': 'sop'
-}
-Do you approve this experience? (y/n): y
-Approved this experience
 ```
 
 ## How It Works
 
-### 1. Space and Session Creation
+### 1. Session Creation
 
 ```python
-space = acontext_client.spaces.create()
-session = acontext_client.sessions.create(space_id=space.id)
+session = acontext_client.sessions.create()
 ```
 
-Creates a new space (knowledge container) and session (conversation thread).
+Creates a new session (conversation thread).
 
 ### 2. Sending Messages
 
@@ -114,73 +97,36 @@ for m in messages:
 
 Sends each message in the conversation to Acontext for processing.
 
-### 3. Waiting for Learning
+### 3. Flushing Session
 
 ```python
 acontext_client.sessions.flush(session.id)
-while True:
-    status = acontext_client.sessions.get_learning_status(session.id)
-    if status.not_space_digested_count == 0:
-        break
 ```
 
-Waits for Acontext to finish analyzing and learning from the conversation.
-
-### 4. Reviewing Unconfirmed Experiences
-
-```python
-unconfirmed_experiences = acontext_client.spaces.get_unconfirmed_experiences(
-    space_id=space.id,
-)
-```
-
-Retrieves experiences that need user approval.
-
-### 5. Confirming or Rejecting
-
-```python
-acontext_client.spaces.confirm_experience(
-    space_id=space.id, 
-    experience_id=m.id, 
-    save=(approve == "y")
-)
-```
-
-Saves the experience if approved (`y`) or discards it if rejected (`n`).
+Flushes the session to trigger task extraction and processing.
 
 ## Use Cases
 
 This pattern is particularly useful for:
 
-- **Human-in-the-loop AI**: Ensuring AI agents learn appropriate behaviors
-- **Quality control**: Reviewing learned patterns before deployment
-- **Privacy compliance**: Allowing users to control what information is stored
-- **Training supervision**: Curating high-quality training data
-- **Error prevention**: Catching and preventing incorrect learnings
+- **Session Management**: Managing conversation sessions with Acontext
+- **Task Extraction**: Automatically extracting tasks from conversations
+- **Conversation Tracking**: Tracking multi-turn conversations
 
 ## Customization
 
 You can modify the example to:
 
 - Use real conversations instead of mock messages
-- Add more sophisticated approval logic
+- Add task processing logic
 - Integrate with your own workflow systems
-- Implement automatic approval based on confidence scores
-- Add experience categorization and filtering
+- Add custom message formatting
 
 ## Troubleshooting
 
-### No experiences are generated
-
-If you see "No new experiences, maybe you should adjust the mock messages or just try again":
-
-- The conversation may not contain clear patterns to learn
-- Try adding more explicit user preferences or instructions
-- Ensure messages contain actionable information
-
-### Learning takes too long
+### Session creation fails
 
 - Check your Acontext instance is running properly
 - Verify network connectivity to the Acontext API
-- Consider adjusting the polling interval in the `sleep()` call
+- Ensure your API key is correct
 

@@ -12,12 +12,12 @@ Supported Examples:
 - `python/openai-agent-artifacts`: Async ReAct-style agent using OpenAI SDK with Acontext Disk APIs for file operations (write, read, download).
 - `python/claude-agent-basic`: Claude Agent SDK paired with Acontext for session storage, task extraction, and progress tracking.
 - `python/agno-basic`: Agno multi-agent framework integration with Acontext for session persistence and task extraction.
-- `python/wait-for-user-confirmation`: Experience confirmation workflow allowing users to review and approve AI-learned patterns before saving to the knowledge base.
+- `python/wait-for-user-confirmation`: User confirmation workflow allowing users to review and approve AI-learned patterns before saving to the knowledge base.
 
 ### TypeScript Examples
 
 - `typescript/openai-basic`: OpenAI SDK with Acontext integration for session management, task extraction, and conversation history retrieval.
-- `typescript/vercel-ai-basic`: Vercel AI SDK with Acontext integration for session management, task extraction, and experience search.
+- `typescript/vercel-ai-basic`: Vercel AI SDK with Acontext integration for session management and task extraction.
 
 
 

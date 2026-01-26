@@ -7,7 +7,7 @@ This example demonstrates how to use the Acontext Python SDK for session managem
 ## Overview
 
 This example shows:
-- Creating spaces and sessions
+- Creating sessions
 - Sending messages to sessions
 - Retrieving tasks from sessions
 - Creating and retrieving artifacts (files)
@@ -52,7 +52,7 @@ python session.py
 ```
 
 This example demonstrates:
-- Creating a space and session
+- Creating a session
 - Sending multiple messages (user and assistant messages, including tool calls)
 - Flushing the session
 - Retrieving and displaying tasks with their status and progress

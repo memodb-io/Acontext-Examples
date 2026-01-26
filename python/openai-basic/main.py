@@ -269,11 +269,7 @@ async def session_2(session_id: str):
 
 
 async def main():
-    space = acontext_client.spaces.create()
-    space_id = space.id
-    print(f"Created space: {space_id}")
-
-    session = acontext_client.sessions.create(space_id=space_id)
+    session = acontext_client.sessions.create()
     session_id = session.id
     print(f"Created session: {session_id}")
 
@@ -283,20 +279,6 @@ async def main():
     print("\n=== Session 2, get messages from Acontext and continue ===")
     await session_2(session_id)
 
-    print("\n=== Experiences from Acontext ===")
-    print("Waiting for the agent learning")
-    while True:
-        status = acontext_client.sessions.get_learning_status(session_id)
-        if status.not_space_digested_count == 0:
-            break
-        sleep(1)
-        print(".", end="", flush=True)
-    print("\n")
-    print(
-        acontext_client.spaces.experience_search(
-            space_id=space_id, query="travel with flight", mode="fast"
-        )
-    )
 
     # Close the client after all sessions are complete
     acontext_client.close()

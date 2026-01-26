@@ -9,7 +9,7 @@ This example shows how to pair the [Claude Agent SDK](https://docs.anthropic.com
 The script demonstrates:
 - Running a short multi-turn conversation with `ClaudeSDKClient`
 - Collecting assistant responses (text, thinking, and tool events) in Anthropic message format
-- Creating an Acontext space + session
+- Creating an Acontext session
 - Sending the full transcript to Acontext and triggering task extraction
 
 ## Prerequisites
@@ -54,7 +54,7 @@ uv run python main.py
 You should see:
 - Each user/assistant exchange with Claude
 - Cost information returned by the Claude Agent SDK
-- Space/session IDs created in Acontext
+- Session ID created in Acontext
 - Extracted tasks printed with their metadata
 
 This serves as a starting point for wiring Claude-based agents into the broader Acontext workflow. Customize the prompts, system instructions, and downstream processing to match your application. 

@@ -6,6 +6,6 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "asyncio",
-    "acontext>=0.0.10",
+    "acontext>=0.1.4",
     "python-dotenv",
 ]

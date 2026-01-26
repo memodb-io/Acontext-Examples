@@ -152,4 +152,3 @@ The script will:
 3. Print extracted tasks with their status and metadata from Acontext
 4. Show any progress updates and user preferences identified by Acontext
 5. Resume the conversation in Session 2 with a summary request using a new agent instance
-6. Demonstrate experience search from Acontext after learning completes

@@ -180,10 +180,9 @@ def send_transcript_to_acontext(
         base_url=base_url,
         timeout=60,
     ) as client:
-        print("\n[acontext] Creating space and session...")
-        space = client.spaces.create()
-        session = client.sessions.create(space_id=space.id)
-        print(f"[acontext] Space: {space.id} | Session: {session.id}")
+        print("\n[acontext] Creating session...")
+        session = client.sessions.create()
+        print(f"[acontext] Session: {session.id}")
 
         print("[acontext] Sending messages (format='anthropic')...")
         for message in transcript:

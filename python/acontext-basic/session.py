@@ -27,10 +27,8 @@ def main():
     with AcontextClient(
         api_key=acontext_api_key, base_url=acontext_base_url
     ) as acontext_client:
-        # Create a space and session
-        space = acontext_client.spaces.create()
-
-        session = acontext_client.sessions.create(space_id=space.id)
+        # Create a session
+        session = acontext_client.sessions.create()
 
         messages = [
             {
