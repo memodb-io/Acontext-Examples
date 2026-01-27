@@ -1,9 +1,12 @@
 import os
 import sys
 import json
+from dotenv import load_dotenv
 from openai import OpenAI
 from acontext import AcontextClient, FileUpload
 from acontext.agent import SANDBOX_TOOLS
+
+load_dotenv()
 
 oai_client = OpenAI(
     base_url=os.getenv("OPENAI_BASE_URL"),

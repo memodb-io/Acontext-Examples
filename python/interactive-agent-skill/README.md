@@ -14,17 +14,43 @@ A demo showing how to create and use Acontext Skills within a sandbox environmen
 - Python 3.10+
 - [uv](https://docs.astral.sh/uv/) (recommended) or pip
 - API keys for OpenAI and Acontext
+- An Acontext instance (local or cloud)
 
 ## Setup
 
-```bash
-# Set environment variables
-export OPENAI_API_KEY="your-openai-api-key"
-export ACONTEXT_API_KEY="your-acontext-api-key"
+1. **Install dependencies:**
 
-# Optional: custom OpenAI base URL
-export OPENAI_BASE_URL="https://api.openai.com/v1"
+```bash
+uv sync
 ```
+
+2. **Configure environment variables:**
+
+Copy the `.env.example` file to `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Then edit the `.env` file with your actual values:
+
+```env
+# OpenAI Configuration
+OPENAI_API_KEY=your-openai-api-key
+
+# Acontext Configuration
+ACONTEXT_API_KEY=sk-ac-your-root-api-bearer-token
+
+# Optional: Custom OpenAI base URL (uncomment if using a different endpoint)
+# OPENAI_BASE_URL=https://api.openai.com/v1
+```
+
+**Required variables:**
+- `OPENAI_API_KEY` - Your OpenAI API key
+- `ACONTEXT_API_KEY` - Your Acontext API key
+
+**Optional variables:**
+- `OPENAI_BASE_URL` - Custom OpenAI endpoint (only needed if using a proxy or alternative service)
 
 ## Usage
 
