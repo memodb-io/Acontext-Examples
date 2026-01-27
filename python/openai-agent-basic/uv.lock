@@ -4,17 +4,18 @@ requires-python = ">=3.13"
 
 [[package]]
 name = "acontext"
-version = "0.0.4"
+version = "0.1.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anthropic" },
     { name = "httpx" },
     { name = "openai" },
     { name = "pydantic" },
+    { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c4/9e/ee3674713032ede3fbb4f4bde72bcae88f871d9b7901afa98399a85e0e69/acontext-0.0.4.tar.gz", hash = "sha256:65b5d33700d475bde48e98a881e6785ff3f149c3a916fee5d42c75a74b047964", size = 19837, upload-time = "2025-11-21T09:05:26.381Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/08/cc/8c2607b240a7c4cc00bef705a3cb04f940357883576ad196a801cb81f06c/acontext-0.1.6.tar.gz", hash = "sha256:c2bae48587805e2efbbbfd52a52c3045a8640bb59bb81a7fd4294facc6504082", size = 36072, upload-time = "2026-01-27T08:54:41.128Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/28/e5/31ae1b91ae3899f31b7e775d85bd5ce6d00b8bcf4730e5339563974daf9c/acontext-0.0.4-py3-none-any.whl", hash = "sha256:f525e7bd16268aca00c257e0f5db97f06edd5589649080cee556d92760d8b012", size = 34326, upload-time = "2025-11-21T09:05:23.374Z" },
+    { url = "https://files.pythonhosted.org/packages/3a/84/16bfe74076bc17c6d185f41d26c029af7700f00b03a4015c0128a90d0eef/acontext-0.1.6-py3-none-any.whl", hash = "sha256:940dfa1323645153253e8c3f16f1c06e3961b1b062420e721040316e954cf16c", size = 56375, upload-time = "2026-01-27T08:54:40.196Z" },
 ]
 
 [[package]]
@@ -477,7 +478,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "acontext", specifier = ">=0.0.4" },
+    { name = "acontext", specifier = ">=0.1.6" },
     { name = "openai", specifier = ">=2.8.0" },
     { name = "openai-agents", specifier = ">=0.6.1" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
@@ -793,11 +794,11 @@ wheels = [
 
 [[package]]
 name = "urllib3"
-version = "2.5.0"
+version = "2.6.3"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/15/22/9ee70a2574a4f4599c47dd506532914ce044817c7752a79b6a51286319bc/urllib3-2.5.0.tar.gz", hash = "sha256:3fc47733c7e419d4bc3f6b3dc2b4f890bb743906a30d56ba4a5bfa4bbff92760", size = 393185, upload-time = "2025-06-18T14:07:41.644Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c7/24/5f1b3bdffd70275f6661c76461e25f024d5a38a46f04aaca912426a2b1d3/urllib3-2.6.3.tar.gz", hash = "sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed", size = 435556, upload-time = "2026-01-07T16:24:43.925Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a7/c2/fe1e52489ae3122415c51f387e221dd0773709bad6c6cdaa599e8a2c5185/urllib3-2.5.0-py3-none-any.whl", hash = "sha256:e6b01673c0fa6a13e374b50871808eb3bf7046c4b125b216f6bf1cc604cff0dc", size = 129795, upload-time = "2025-06-18T14:07:40.39Z" },
+    { url = "https://files.pythonhosted.org/packages/39/08/aaaad47bc4e9dc8c725e68f9d04865dbcb2052843ff09c97b08904852d84/urllib3-2.6.3-py3-none-any.whl", hash = "sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4", size = 131584, upload-time = "2026-01-07T16:24:42.685Z" },
 ]
 
 [[package]]

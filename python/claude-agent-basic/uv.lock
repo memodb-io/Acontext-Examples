@@ -4,17 +4,18 @@ requires-python = ">=3.13"
 
 [[package]]
 name = "acontext"
-version = "0.0.3"
+version = "0.1.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anthropic" },
     { name = "httpx" },
     { name = "openai" },
     { name = "pydantic" },
+    { name = "urllib3" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/7d/18/1ad4077df86d239612c3ec4aee360cfc022657c860506393b3a3f91c2029/acontext-0.0.3.tar.gz", hash = "sha256:c14eebf1542c8f7980ff8c1ef5164e5da75f42becf2066f2725d82ed506a509a", size = 19473, upload-time = "2025-11-14T15:31:32.31Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/08/cc/8c2607b240a7c4cc00bef705a3cb04f940357883576ad196a801cb81f06c/acontext-0.1.6.tar.gz", hash = "sha256:c2bae48587805e2efbbbfd52a52c3045a8640bb59bb81a7fd4294facc6504082", size = 36072, upload-time = "2026-01-27T08:54:41.128Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7b/93/d7eedf5a917125032135183a733e624bfb1a3e6481eeeefd9a2241973275/acontext-0.0.3-py3-none-any.whl", hash = "sha256:ec5270c96cb74212f2568d4fa0502bc4d4fd004894a17331990fcdc8a963d887", size = 34024, upload-time = "2025-11-14T15:31:31.411Z" },
+    { url = "https://files.pythonhosted.org/packages/3a/84/16bfe74076bc17c6d185f41d26c029af7700f00b03a4015c0128a90d0eef/acontext-0.1.6-py3-none-any.whl", hash = "sha256:940dfa1323645153253e8c3f16f1c06e3961b1b062420e721040316e954cf16c", size = 56375, upload-time = "2026-01-27T08:54:40.196Z" },
 ]
 
 [[package]]
@@ -133,7 +134,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
-    { name = "acontext" },
+    { name = "acontext", specifier = ">=0.1.6" },
     { name = "claude-agent-sdk" },
     { name = "python-dotenv" },
 ]
@@ -704,6 +705,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/55/e3/70399cb7dd41c10ac53367ae42139cf4b1ca5f36bb3dc6c9d33acdb43655/typing_inspection-0.4.2.tar.gz", hash = "sha256:ba561c48a67c5958007083d386c3295464928b01faa735ab8547c5692e87f464", size = 75949, upload-time = "2025-10-01T02:14:41.687Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/dc/9b/47798a6c91d8bdb567fe2698fe81e0c6b7cb7ef4d13da4114b41d239f65d/typing_inspection-0.4.2-py3-none-any.whl", hash = "sha256:4ed1cacbdc298c220f1bd249ed5287caa16f34d44ef4e9c3d0cbad5b521545e7", size = 14611, upload-time = "2025-10-01T02:14:40.154Z" },
+]
+
+[[package]]
+name = "urllib3"
+version = "2.6.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c7/24/5f1b3bdffd70275f6661c76461e25f024d5a38a46f04aaca912426a2b1d3/urllib3-2.6.3.tar.gz", hash = "sha256:1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed", size = 435556, upload-time = "2026-01-07T16:24:43.925Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/39/08/aaaad47bc4e9dc8c725e68f9d04865dbcb2052843ff09c97b08904852d84/urllib3-2.6.3-py3-none-any.whl", hash = "sha256:bf272323e553dfb2e87d9bfd225ca7b0f467b919d7bbd355436d3fd37cb0acd4", size = 131584, upload-time = "2026-01-07T16:24:42.685Z" },
 ]
 
 [[package]]
