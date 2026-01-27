@@ -1,0 +1,32 @@
+{
+  "name": "interactive-agent-skill",
+  "version": "0.1.0",
+  "description": "Interactive agent with Acontext Skills in a sandbox environment",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "keywords": [
+    "openai",
+    "acontext",
+    "typescript",
+    "ai",
+    "sandbox",
+    "skills"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@acontext/acontext": "^0.1.3",
+    "dotenv": "^17.2.3",
+    "openai": "^6.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
