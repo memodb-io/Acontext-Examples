@@ -1,5 +1,5 @@
 [project]
-name = "claude-agent-sdk"
+name = "claude-agent-sdk-example"
 version = "0.1.0"
 description = "Example: Claude Agent SDK + Acontext ClaudeAgentStorage integration"
 readme = "README.md"
