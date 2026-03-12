@@ -338,34 +338,40 @@ async function session1(sessionId: string): Promise<void> {
   );
 
   console.log(
-    `Saved ${conversation.length} messages in conversation, waiting for tasks extraction...`
+    `Saved ${conversation.length} messages in conversation, triggering learning...`
   );
 
-  // Flush and get tasks
-  await acontextClient.sessions.flush(sessionId);
-  const tasksResponse = await acontextClient.sessions.getTasks(sessionId);
+  // Create a learning space and trigger learning
+  const space = await acontextClient.learningSpaces.create();
+  await acontextClient.learningSpaces.learn({ spaceId: space.id, sessionId });
+  console.log(`\nCreated learning space: ${space.id}`);
 
-  console.log('\n=== Extracted Tasks ===');
-  for (const task of tasksResponse.items) {
-    console.log(`\nTask #${task.order}:`);
-    console.log(`  ID: ${task.id}`);
-    console.log(`  Title: ${task.data.task_description}`);
-    console.log(`  Status: ${task.status}`);
+  // Wait for learning to complete
+  console.log('Waiting for learning to complete...');
+  const learnResult = await acontextClient.learningSpaces.waitForLearning({ spaceId: space.id, sessionId });
+  console.log(`Learning status: ${learnResult.status}`);
 
-    // Show progress updates if available
-    if (task.data.progresses) {
-      console.log(`  Progress updates: ${task.data.progresses.length}`);
-      for (const progress of task.data.progresses) {
-        console.log(`    - ${progress}`);
-      }
-    }
+  // List learned skills
+  const skills = await acontextClient.learningSpaces.listSkills(space.id);
+  console.log(`\n=== Learned Skills (${skills.length}) ===`);
+  for (const skill of skills) {
+    console.log(`\n  - ${skill.name}: ${skill.description}`);
+    console.log(`    files: ${skill.file_index.map((f: any) => f.path)}`);
+  }
 
-    // Show user preferences if available
-    if (task.data.user_preferences) {
-      console.log('  User preferences:');
-      for (const pref of task.data.user_preferences) {
-        console.log(`    - ${pref}`);
-      }
+  // Download all skill files
+  const downloadDir = './skills_output';
+  const fs = await import('fs');
+  if (fs.existsSync(downloadDir)) {
+    fs.rmSync(downloadDir, { recursive: true });
+  }
+
+  console.log(`\nDownloading skills to ${downloadDir}/`);
+  for (const skill of skills) {
+    const resp = await acontextClient.skills.download(skill.id, { path: `${downloadDir}/${skill.name}` });
+    console.log(`  ${resp.name} -> ${resp.dirPath}`);
+    for (const f of resp.files) {
+      console.log(`    ${f}`);
     }
   }
 }
@@ -382,10 +388,6 @@ async function session2(sessionId: string): Promise<void> {
 
   const [responseContent] = await runAgent(conversation);
   console.log(`\nAssistant: ${responseContent}`);
-}
-
-async function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function main(): Promise<void> {

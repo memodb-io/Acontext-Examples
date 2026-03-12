@@ -18,14 +18,14 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@acontext/acontext": "^0.1.3",
-    "@ai-sdk/openai": "^3.0.19",
-    "ai": "^6.0.49",
-    "dotenv": "^17.2.3",
+    "@acontext/acontext": "^0.1.16",
+    "@ai-sdk/openai": "^3.0.41",
+    "ai": "^6.0.116",
+    "dotenv": "^17.3.1",
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@types/node": "^25.0.10",
+    "@types/node": "^25.4.0",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }

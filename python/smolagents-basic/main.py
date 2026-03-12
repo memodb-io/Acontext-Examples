@@ -1,7 +1,7 @@
 import inspect
 import json
 import os
-import time
+import shutil
 from functools import wraps
 from typing import Any, List, Dict, Callable
 from acontext import AcontextClient
@@ -403,31 +403,37 @@ def session_1(
         send_message(client, msg, session_id)
 
     print(
-        f"\nSaved {len(all_messages)} messages in conversation, waiting for tasks extraction..."
+        f"\nSaved {len(all_messages)} messages in conversation, triggering learning..."
     )
 
-    # Flush and get tasks
-    client.sessions.flush(session_id)
-    tasks_response = client.sessions.get_tasks(session_id)
+    # Create a learning space and trigger learning
+    space = client.learning_spaces.create()
+    client.learning_spaces.learn(space.id, session_id=session_id)
+    print(f"\nCreated learning space: {space.id}")
 
-    print("\n=== Extracted Tasks ===")
-    for task in tasks_response.items:
-        print(f"\nTask #{task.order}:")
-        print(f"  ID: {task.id}")
-        print(f"  Title: {task.data.task_description}")
-        print(f"  Status: {task.status}")
+    # Wait for learning to complete
+    print("Waiting for learning to complete...")
+    result = client.learning_spaces.wait_for_learning(space.id, session_id=session_id)
+    print(f"Learning status: {result.status}")
 
-        # Show progress updates if available
-        if task.data.progresses:
-            print(f"  Progress updates: {len(task.data.progresses)}")
-            for progress in task.data.progresses:
-                print(f"    - {progress}")
+    # List learned skills
+    skills = client.learning_spaces.list_skills(space.id)
+    print(f"\n=== Learned Skills ({len(skills)}) ===")
+    for skill in skills:
+        print(f"\n  - {skill.name}: {skill.description}")
+        print(f"    files: {[f.path for f in skill.file_index]}")
 
-        # Show user preferences if available
-        if task.data.user_preferences:
-            print("  User preferences:")
-            for pref in task.data.user_preferences:
-                print(f"    - {pref}")
+    # Download all skill files
+    download_dir = "./skills_output"
+    if os.path.exists(download_dir):
+        shutil.rmtree(download_dir)
+
+    print(f"\nDownloading skills to {download_dir}/")
+    for skill in skills:
+        resp = client.skills.download(skill_id=skill.id, path=f"{download_dir}/{skill.name}")
+        print(f"  {resp.name} -> {resp.dir_path}")
+        for f in resp.files:
+            print(f"    {f}")
 
 
 def messages_to_string(messages) -> str:

@@ -3,14 +3,13 @@ Main entry point demonstrating Acontext.
 
 This script shows how to:
 1. create and get sessions, create messages
-2. Retrieve tasks
+2. Learn from sessions and retrieve skills
 """
 
 import os
+import shutil
 from dotenv import load_dotenv
 from acontext import AcontextClient
-import time
-import itertools
 
 
 def main():
@@ -160,25 +159,34 @@ def main():
                 session_id=session.id, blob=message, format="acontext"
             )
 
-        acontext_client.sessions.flush(session.id)
-        tasks_response = acontext_client.sessions.get_tasks(session.id)
-        for task in tasks_response.items:
-            print(f"\nTask #{task.order}:")
-            print(f"  ID: {task.id}")
-            print(f"  Title: {task.data.task_description}")
-            print(f"  Status: {task.status}")
+        # Create a learning space and trigger learning
+        space = acontext_client.learning_spaces.create()
+        acontext_client.learning_spaces.learn(space.id, session_id=session.id)
+        print(f"\nCreated learning space: {space.id}")
 
-            # Show progress updates if available
-            if task.data.progresses:
-                print(f"  Progress updates: {len(task.data.progresses)}")
-                for progress in task.data.progresses:
-                    print(f"    - {progress}")
+        # Wait for learning to complete
+        print("Waiting for learning to complete...")
+        result = acontext_client.learning_spaces.wait_for_learning(space.id, session_id=session.id)
+        print(f"Learning status: {result.status}")
 
-            # Show user preferences if available
-            if task.data.user_preferences:
-                print("  User preferences:")
-                for pref in task.data.user_preferences:
-                    print(f"    - {pref}")
+        # List learned skills
+        skills = acontext_client.learning_spaces.list_skills(space.id)
+        print(f"\n=== Learned Skills ({len(skills)}) ===")
+        for skill in skills:
+            print(f"\n  - {skill.name}: {skill.description}")
+            print(f"    files: {[f.path for f in skill.file_index]}")
+
+        # Download all skill files
+        download_dir = "./skills_output"
+        if os.path.exists(download_dir):
+            shutil.rmtree(download_dir)
+
+        print(f"\nDownloading skills to {download_dir}/")
+        for skill in skills:
+            resp = acontext_client.skills.download(skill_id=skill.id, path=f"{download_dir}/{skill.name}")
+            print(f"  {resp.name} -> {resp.dir_path}")
+            for f in resp.files:
+                print(f"    {f}")
 
 
 if __name__ == "__main__":

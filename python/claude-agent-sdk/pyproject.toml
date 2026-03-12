@@ -5,7 +5,7 @@ description = "Example: Claude Agent SDK + Acontext ClaudeAgentStorage integrati
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "acontext>=0.1.6",
+    "acontext>=0.1.18",
     "claude-agent-sdk",
     "python-dotenv",
 ]

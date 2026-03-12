@@ -1,12 +1,12 @@
 import asyncio
 import os
+import shutil
 from dotenv import load_dotenv
 from rich import print
 from agno.agent import Agent, RunOutput
 from agno.models.openai import OpenAIChat
 from agno.tools import tool
 from acontext import AcontextClient
-from time import sleep
 
 load_dotenv()
 acontext_client = AcontextClient(
@@ -134,31 +134,37 @@ async def session_1(session_id: str):
     )
 
     print(
-        f"Saved {len(conversation)} messages in conversation, waiting for tasks extraction..."
+        f"Saved {len(conversation)} messages in conversation, triggering learning..."
     )
 
-    # Flush and get tasks
-    acontext_client.sessions.flush(session_id)
-    tasks_response = acontext_client.sessions.get_tasks(session_id)
+    # Create a learning space and trigger learning
+    space = acontext_client.learning_spaces.create()
+    acontext_client.learning_spaces.learn(space.id, session_id=session_id)
+    print(f"\nCreated learning space: {space.id}")
 
-    print("\n=== Extracted Tasks ===")
-    for task in tasks_response.items:
-        print(f"\nTask #{task.order}:")
-        print(f"  ID: {task.id}")
-        print(f"  Title: {task.data.task_description}")
-        print(f"  Status: {task.status}")
+    # Wait for learning to complete
+    print("Waiting for learning to complete...")
+    result = acontext_client.learning_spaces.wait_for_learning(space.id, session_id=session_id)
+    print(f"Learning status: {result.status}")
 
-        # Show progress updates if available
-        if task.data.progresses:
-            print(f"  Progress updates: {len(task.data.progresses)}")
-            for progress in task.data.progresses:
-                print(f"    - {progress}")
+    # List learned skills
+    skills = acontext_client.learning_spaces.list_skills(space.id)
+    print(f"\n=== Learned Skills ({len(skills)}) ===")
+    for skill in skills:
+        print(f"\n  - {skill.name}: {skill.description}")
+        print(f"    files: {[f.path for f in skill.file_index]}")
 
-        # Show user preferences if available
-        if task.data.user_preferences:
-            print("  User preferences:")
-            for pref in task.data.user_preferences:
-                print(f"    - {pref}")
+    # Download all skill files
+    download_dir = "./skills_output"
+    if os.path.exists(download_dir):
+        shutil.rmtree(download_dir)
+
+    print(f"\nDownloading skills to {download_dir}/")
+    for skill in skills:
+        resp = acontext_client.skills.download(skill_id=skill.id, path=f"{download_dir}/{skill.name}")
+        print(f"  {resp.name} -> {resp.dir_path}")
+        for f in resp.files:
+            print(f"    {f}")
 
 
 async def session_2(session_id: str):
