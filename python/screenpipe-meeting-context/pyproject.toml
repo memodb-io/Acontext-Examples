@@ -1,0 +1,9 @@
+[project]
+name = "screenpipe-meeting-context"
+version = "0.1.0"
+description = "Add one reviewed Screenpipe meeting note to an Acontext session"
+requires-python = ">=3.11"
+dependencies = ["acontext>=0.1.22,<0.2"]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.11"]

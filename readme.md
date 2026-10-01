@@ -16,6 +16,8 @@ Supported Examples:
 - `python/interactive-agent-skill`: Interactive sandbox demo that uploads Acontext Skills (zip) and runs an OpenAI agentic loop with bash, Python, and file export tools.
 - `python/wait-for-user-confirmation`: User confirmation workflow allowing users to review and approve AI-learned patterns before saving to the knowledge base.
 
+- `python/screenpipe-meeting-context`: Preview and explicitly add one reviewed Screenpipe meeting note to an Acontext session.
+
 ### TypeScript Examples
 
 - `typescript/openai-basic`: OpenAI SDK with Acontext integration for session management, task extraction, and conversation history retrieval.
